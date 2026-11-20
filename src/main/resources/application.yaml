@@ -1,3 +1,15 @@
 spring:
   application:
     name: ms-auth
+  config:
+    import:
+      - "optional:configserver:${CONFIG_SERVER_URI:http://localhost:8888}"
+      - "optional:vault://"
+  cloud:
+    vault:
+      uri: ${VAULT_URI:http://localhost:8200}
+      token: ${VAULT_TOKEN:pivot-root-token}
+      kv:
+        enabled: true
+        backend: secret
+        default-context: pivot-bank
