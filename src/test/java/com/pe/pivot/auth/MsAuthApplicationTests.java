@@ -1,13 +1,22 @@
 package com.pe.pivot.auth;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Smoke test for MsAuthApplication class definition.
+ */
 class MsAuthApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+  @Test
+  @DisplayName("Should be instantiate MsAuthApplication successfully")
+  void shouldBeInstantiateApplicationSuccessfully() {
+    // Arrange & Act
+    MsAuthApplication application = new MsAuthApplication();
 
+    // Assert
+    assertNotNull(application);
+  }
 }

@@ -4,6 +4,9 @@ import com.pe.pivot.auth.infrastructure.adapter.out.persistence.entity.AuthUserD
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
+/**
+ * Reactive Spring Data MongoDB repository for AuthUser documents.
+ */
 public interface ReactiveAuthUserMongoRepository
         extends ReactiveMongoRepository<AuthUserDocument, String> {
 

@@ -32,10 +32,12 @@ public class JjwtTokenAdapter implements JwtTokenPort {
   private final long expirationMs;
 
   /**
-   * Constructor for JjwtTokenAdapter, initializing the signing key and token expiration time from application properties.
+   * Constructor for JjwtTokenAdapter, initializing the signing key and token
+   * expiration time from application properties.
    *
-   * @param secretKey - the Base64-encoded secret key for signing JWTs, injected from application properties
-   * @param expirationMs - the expiration time for JWTs in milliseconds, injected from application properties (default: 3600000 ms)
+   * @param secretKey - the Base64-encoded secret key for signing JWTs
+   * @param expirationMs - the expiration time for JWTs in milliseconds
+   *        (default: 3600000 ms)
    */
   public JjwtTokenAdapter(
           @Value("${application.security.jwt.secret-key}") String secretKey,
@@ -45,7 +47,8 @@ public class JjwtTokenAdapter implements JwtTokenPort {
   }
 
   /**
-   * Generates a JWT token for the given authenticated user, embedding their username, role, and customer ID as claims.
+   * Generates a JWT token for the given authenticated user, embedding their
+   * username, role, and customer ID as claims.
    *
    * @param user - the authenticated user for whom the token is to be generated
    * @return - an AuthToken object containing the generated JWT and associated metadata
@@ -95,7 +98,8 @@ public class JjwtTokenAdapter implements JwtTokenPort {
               .parseSignedClaims(token)
               .getPayload();
 
-      // Extract the role claim and convert it to a Role enum, defaulting to ROLE_USER if not present
+      // Extract the role claim and convert it to a Role enum,
+      // defaulting to ROLE_USER if not present
       String roleValue = claims.get(CLAIM_ROLE, String.class);
       Role role = roleValue != null ? Role.valueOf(roleValue) : Role.ROLE_USER;
 

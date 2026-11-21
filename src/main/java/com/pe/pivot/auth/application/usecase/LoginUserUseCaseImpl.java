@@ -26,11 +26,13 @@ public class LoginUserUseCaseImpl implements LoginUserUseCase {
   private final JwtTokenPort jwtTokenPort;
 
   /**
-   * Authenticates a user by validating their username and password, and generates a JWT token upon successful authentication.
+   * Authenticates a user by validating their username and password,
+   * and generates a JWT token upon successful authentication.
    *
    * @param username - the username of the user attempting to log in
    * @param rawPassword - the password of the user attempting to log in
-   * @return - a Single emitting an AuthToken if authentication is successful, or an error if it fails
+   * @return - a Single emitting an AuthToken if authentication is successful,
+   *           or an error if it fails
    */
   @Override
   public Single<AuthToken> login(String username, String rawPassword) {

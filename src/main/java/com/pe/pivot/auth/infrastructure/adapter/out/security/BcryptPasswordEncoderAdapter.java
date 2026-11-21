@@ -4,6 +4,9 @@ import com.pe.pivot.auth.domain.port.out.PasswordEncoderPort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Password encoder adapter implementing BCrypt hashing.
+ */
 @Component
 public class BcryptPasswordEncoderAdapter implements PasswordEncoderPort {
 
@@ -16,8 +19,8 @@ public class BcryptPasswordEncoderAdapter implements PasswordEncoderPort {
    * @return - the BCrypt hashed password
    */
   @Override
-  public String encode(String rawPassword){
-   return encoder.encode(rawPassword);
+  public String encode(String rawPassword) {
+    return encoder.encode(rawPassword);
   }
 
   /**

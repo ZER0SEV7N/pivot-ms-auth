@@ -28,7 +28,7 @@ public class ValidateTokenUseCaseImpl implements ValidateTokenUseCase {
    */
   @Override
   public Single<TokenClaims> validate(String authorizationHeader) {
-    if ( authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX) ) {
+    if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX)) {
       return Single.error(
               new InvalidTokenException("Missing or malformed Authorization Bearer header."));
     }

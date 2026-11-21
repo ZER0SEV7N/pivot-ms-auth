@@ -35,19 +35,10 @@ public class AuthController {
   private final AuthWebMapper mapper;
 
   /**
-   * Registers a new user based on the provided RegisterRequest and returns an AuthResponse containing the generated JWT token.
+   * Registers a new user based on the provided RegisterRequest.
    *
-   * @Post /api/v1/auth/register
    * @param request - the RegisterRequest containing the details for the new user
-   * @body : {
-   *   - username: "string",
-   *   - email: "string",
-   *   - password: "string",
-   *   - role: "string",
-   *   - customerId: "string"
-   * }
-   * @return - Single emitting an AuthResponse containing
-   *           the generated JWT token and associated metadata with HTTP status 201 (Created)
+   * @return - a Single emitting an AuthResponse with the generated JWT token
    */
   @PostMapping("/register")
   @ResponseStatus(HttpStatus.CREATED)
@@ -57,17 +48,10 @@ public class AuthController {
   }
 
   /**
-   * Authenticates a user based on the provided
-   * LoginRequest and returns an AuthResponse containing the generated JWT token.
+   * Authenticates a user based on the provided LoginRequest.
    *
-   * @Post /api/v1/auth/login
-   * @param request - the LoginRequest containing the username and password for authentication
-   * @body : {
-   *   - username: "string",
-   *   - password: "string"
-   * }
-   * @return - Single emitting an AuthResponse containing the
-   *           generated JWT token and associated metadata
+   * @param request - the LoginRequest containing the username and password
+   * @return - a Single emitting an AuthResponse with the generated JWT token
    */
   @PostMapping("/login")
   public Single<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -76,14 +60,10 @@ public class AuthController {
   }
 
   /**
-   * Validates the provided JWT token from the
-   * Authorization header and returns a TokenValidationResponse indicating its validity.
+   * Validates the provided JWT token from the Authorization header.
    *
-   * @Get /api/v1/auth/validate
-   * @header Authorization: Bearer <JWT_TOKEN>
    * @param authHeader - the Authorization header containing the JWT token to validate
-   * @return - Single emitting a TokenValidationResponse indicating the validity of the token
-   *           with HTTP status 200 (OK)
+   * @return - a Single emitting a TokenValidationResponse indicating token validity
    */
   @GetMapping("/validate")
   public Single<TokenValidationResponse> validate(

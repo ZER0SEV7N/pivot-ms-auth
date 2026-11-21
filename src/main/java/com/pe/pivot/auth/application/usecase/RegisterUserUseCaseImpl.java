@@ -25,7 +25,7 @@ public class RegisterUserUseCaseImpl implements RegisterUserUseCase {
   private final JwtTokenPort tokenPort;
 
   @Override
-  public Single<AuthToken> registerUser(AuthUser user, String rawPassword){
+  public Single<AuthToken> registerUser(AuthUser user, String rawPassword) {
     String normalizedUsername = userInitializer.normalize(user.getUsername());
     String normalizedEmail = userInitializer.normalize(user.getEmail());
 

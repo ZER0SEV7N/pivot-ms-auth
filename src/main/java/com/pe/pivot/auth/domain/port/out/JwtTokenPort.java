@@ -11,7 +11,8 @@ public interface JwtTokenPort {
 
   /**
    * Generates a JWT token for the given authenticated user.
-   * The token encapsulates the user's identity and claims, allowing secure communication between services.
+   * The token encapsulates the user's identity and claims, allowing secure
+   * communication between services.
    *
    * @param user - the authenticated user for whom the token is to be generated
    * @return - an AuthToken representing the generated JWT token
