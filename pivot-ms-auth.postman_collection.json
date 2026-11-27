@@ -1,0 +1,356 @@
+{
+  "info": {
+    "_postman_id": "e5f6a7b8-c9d0-4e1f-8a2b-3c4d5e6f7a8b",
+    "name": "Pivot Banking - ms-auth (Phase III)",
+    "description": "Postman Collection for pivot-ms-auth (Phase III): user registration, BCrypt login, HS256 JWT issuance and token validation. The gateway exposes /api/v1/auth/** as a public route; on protected routes it validates the same token and propagates X-Auth-User, X-Auth-Role and X-Auth-Customer-Id. Secrets (jwt-secret-key, jwt-expiration-ms) come from Vault secret/pivot-bank. Zero outbound REST calls.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Register ROLE_USER (201 Created - JWT issued)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/register",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"email\": \"daniel.singer@pivotbank.pe\",\n  \"password\": \"{{password}}\",\n  \"role\": \"ROLE_USER\",\n  \"customerId\": \"{{customerId}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "if (jsonData.accessToken) { pm.collectionVariables.set(\"accessToken\", jsonData.accessToken); }",
+              "pm.test(\"Token type is Bearer\", function () { pm.expect(jsonData.tokenType).to.eql(\"Bearer\"); });",
+              "pm.test(\"Role is ROLE_USER\", function () { pm.expect(jsonData.role).to.eql(\"ROLE_USER\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Register ROLE_ADMIN (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/register",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"email\": \"admin@pivotbank.pe\",\n  \"password\": \"{{adminPassword}}\",\n  \"role\": \"ROLE_ADMIN\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "if (jsonData.accessToken) { pm.collectionVariables.set(\"adminToken\", jsonData.accessToken); }",
+              "pm.test(\"Role is ROLE_ADMIN\", function () { pm.expect(jsonData.role).to.eql(\"ROLE_ADMIN\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. [Error] Register Duplicate Username",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/register",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"email\": \"duplicate.daniel@pivotbank.pe\",\n  \"password\": \"Another2026!\",\n  \"role\": \"ROLE_USER\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Duplicate registration is rejected\", function () {",
+              "    pm.expect(pm.response.code).to.be.at.least(400);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Login with Valid Credentials (200 OK - fresh JWT)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/login",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "if (jsonData.accessToken) { pm.collectionVariables.set(\"accessToken\", jsonData.accessToken); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. [Error] Login with Invalid Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/login",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"wrong-password\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Invalid credentials are rejected\", function () {",
+              "    pm.expect(pm.response.code).to.be.at.least(400);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Validate JWT (200 OK - valid claims)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/validate",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "validate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Token is valid and belongs to the registered user\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.valid).to.eql(true);",
+              "    pm.expect(jsonData.username).to.eql(pm.collectionVariables.get(\"username\"));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Validate ADMIN JWT (200 OK - ROLE_ADMIN claim)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/validate",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "validate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Admin token carries ROLE_ADMIN\", function () { pm.expect(pm.response.json().role).to.eql(\"ROLE_ADMIN\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. [Error] Validate Token without Authorization Header",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{urlMsAuth}}/auth/validate",
+          "host": [
+            "{{urlMsAuth}}"
+          ],
+          "path": [
+            "auth",
+            "validate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Missing token is rejected\", function () {",
+              "    pm.expect(pm.response.code).to.be.at.least(400);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "urlMsAuth",
+      "value": "http://localhost:8085/api/v1",
+      "type": "string",
+      "description": "También puede probarse a través del gateway: http://localhost:8080/api/v1 (ruta pública)."
+    },
+    {
+      "key": "username",
+      "value": "daniel.singer",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "Pivot2026!",
+      "type": "string"
+    },
+    {
+      "key": "adminUsername",
+      "value": "admin.pivot",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "Admin2026!",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string",
+      "description": "Se completa en el request 1 o 4."
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string",
+      "description": "Se completa en el request 2."
+    },
+    {
+      "key": "customerId",
+      "value": "",
+      "type": "string",
+      "description": "Opcional: vincula el usuario con un cliente de ms-customer."
+    }
+  ]
+}
